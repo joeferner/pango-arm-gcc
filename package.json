@@ -1,0 +1,26 @@
+{
+  "name": "@pango/arm-gcc",
+  "version": "0.0.1",
+  "description": "Pango component to setup and use ARM GCC compiler and tools",
+  "main": "dist/index.js",
+  "author": "Joe Ferner <joe@fernsroth.com>",
+  "license": "MIT",
+  "scripts": {
+    "prepublish": "npm run build",
+    "build": "tsc",
+    "watch": "tsc --watch"
+  },
+  "devDependencies": {
+    "typescript": "^2.5.3"
+  },
+  "peerDependencies": {
+    "pango": "0.0.1",
+    "@pango/components": "0.0.1",
+    "@pango/gcc": "0.0.1"
+  },
+  "dependencies": {
+    "@types/fs-extra": "^4.0.3",
+    "child-process-promise": "^2.2.1",
+    "fs-extra": "^4.0.2"
+  }
+}
