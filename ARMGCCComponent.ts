@@ -1,4 +1,4 @@
-import {Component} from "@pango/components";
+import {Component} from "pango-components";
 import {ProjectOptions} from "pango";
 import {ARMGCCComponentOptions} from "./ARMGCCComponentOptions";
 import {ARMGCCBuildTarget} from "./ARMGCCBuildTarget";

@@ -1,5 +1,5 @@
 import {ProjectOptions, Task, TaskOptions, Tasks} from "pango";
-import {GccComponentOptions} from "@pango/gcc";
+import {GccComponentOptions} from "pango-gcc";
 import {ARMGCCComponentOptions} from "./ARMGCCComponentOptions";
 import * as path from "path";
 import {COMPONENT_NAME} from "./ARMGCCComponent";
