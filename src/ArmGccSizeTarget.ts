@@ -1,30 +1,25 @@
-import {ProjectOptions, Task, TaskOptions, Tasks} from "pango";
-import {GccComponentOptions} from "pango-gcc";
-import {ARMGCCComponentOptions} from "./ARMGCCComponentOptions";
-import {COMPONENT_NAME} from "./ARMGCCComponent";
+import {ProjectOptions, Target, Targets} from "pango";
+import {getArmGccOptions} from "./ArmGccOptions";
+import {getGccOptions} from "pango-gcc";
 import * as path from "path";
 import * as childProcess from "child-process-promise";
 import * as fs from "fs-extra";
 
 const spawn = childProcess.spawn;
 
-export class ARMGCCSizeTask extends Task {
-    getPrerequisites(projectOptions: ProjectOptions): string[] {
-        return ['link'];
-    }
+export class ArmGccSizeTarget implements Target {
+    postRequisites = ['build'];
+    preRequisites = ['link'];
 
-    run(taskOptions: TaskOptions): Promise<void | Tasks> {
-        const component: ARMGCCComponentOptions = taskOptions.projectOptions.components[COMPONENT_NAME];
-        const gccComponent: GccComponentOptions = taskOptions.projectOptions.components['gcc'];
+    async run(projectOptions: ProjectOptions): Promise<void | Targets | string[]> {
+        const gccOptions = getGccOptions(projectOptions);
+        const options = getArmGccOptions(projectOptions);
 
-        component.sizeFile = path.join(
-            path.dirname(gccComponent.outputFile),
-            path.basename(gccComponent.outputFile, path.extname(gccComponent.outputFile)) + '.size'
-        );
+        options.sizeFile = options.sizeFile || path.join(path.dirname(gccOptions.outputFile), options.sizeFileName);
 
         const cmd = [
             'arm-none-eabi-size',
-            gccComponent.outputFile
+            gccOptions.outputFile
         ];
         const promise = spawn(cmd[0], cmd.slice(1));
         const childProcess = promise.childProcess;
@@ -35,7 +30,7 @@ export class ARMGCCSizeTask extends Task {
         childProcess.stderr.on('data', function (data) {
             let lines = data.toString().trim().split('\n');
             for (const line of lines) {
-                taskOptions.log.error(line);
+                projectOptions.logger.error(line);
             }
         });
         return promise.then(() => {
@@ -46,7 +41,7 @@ export class ARMGCCSizeTask extends Task {
                 data: Number.parseInt(values[1]),
                 bss: Number.parseInt(values[2])
             };
-            return fs.writeJson(component.sizeFile, data, {spaces: 2});
+            return fs.writeJson(options.sizeFile, data, {spaces: 2});
         });
     }
 }
